@@ -41,8 +41,11 @@ function init() {
  * which will be called after everything has run successfully.
  */
  function loadFeed(id, cb) {
+     console.log('entering loadfeed():');
+     
      var feedUrl = allFeeds[id].url,
-         feedName = allFeeds[id].name;
+         feedName = allFeeds[id].name,
+         self = this;
 
      $.ajax({
        type: "POST",
@@ -70,12 +73,14 @@ function init() {
                  });
 
                  if (cb) {
-                     cb();
+                    console.log('exiting loafFeed w/ success'); 
+                    cb();
                  }
                },
        error: function (result, status, err){
                  //run only the callback without attempting to parse result due to error
                  if (cb) {
+                    console.log('exiting loafFeed w/ err');
                      cb();
                  }
                },
