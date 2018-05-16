@@ -122,19 +122,22 @@ $(function() {
                     loaded[index] = $('.feed').find('.entry h2:lt(5)');
                     console.log(index, loaded[index]);
                     index++;
-                    return loadFeed(index,()=>{
+                    loadFeed(index,()=>{
                         loaded[index] = $('.feed').find('.entry h2:lt(5)');
                         console.log(index, loaded[index]);
                         index++; 
-                        return loadFeed(index,()=>{
+                        loadFeed(index,()=>{
                             loaded[index] = $('.feed').find('.entry h2:lt(5)');
                             console.log(index, loaded[index]);
                             index++;                            
-                            return loadFeed(index,()=>{
-                                loaded[index] = $('.feed').find('.entry h2:lt(5)');
-                                console.log(index, loaded[index]);
-                                index++; 
-                                return done();
+                            loadFeed(index,()=>{
+                                setTimeout(function (done) {
+                                    loaded[index] = $('.feed').find('.entry h2:lt(5)');
+                                    console.log(index, loaded[index]);
+                                    index++; 
+                                    done();
+                                    }, 15000);
+         
                             });
                         });
                     });
@@ -148,15 +151,17 @@ $(function() {
         {
             loaded.forEach((feed, idx) =>{
                 try{
-                    /* for(i=0;i<(feed.length);i++){
+                    /* Get only the title, to have a precise comparation */
+                    for(i=0;i<5;i++){
                        loaded[idx][i] = feed[i].innerText;
-                    } */
-                    
+                    } 
                     console.log(idx, loaded);
-                    expect(JSON.stringify(loaded[idx--])).not.toBe(JSON.stringify(loaded[idx]));
+                    /* start the comparations from the position 1 */
+                    (idx > 0 && idx < loaded.length) ? expect(JSON.stringify(loaded[idx--])).not.toBe(JSON.stringify(loaded[idx])) : 
+                    (idx === loaded.length-- ? done() : false);
                 
                 }catch(error){ 
-                    console.log('Spec:',error); throw error;
+                    console.log('Spec:',error); throw error;    
                 } 
             });          
         });
