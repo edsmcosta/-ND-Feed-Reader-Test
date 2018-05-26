@@ -9,11 +9,11 @@
  * to ensure they don't run until the DOM is ready.
  */
 $(function() {
-    /* This suite is all about the RSS
+    /*  This suite is all about the RSS
     * feeds definitions, the allFeeds variable in our application.
     */
     describe('RSS Feeds', function() {
-        /* it tests to make sure that the
+        /* Tmake sure that the
          * allFeeds variable has been defined and that it is not
          * empty. 
          */
@@ -35,7 +35,7 @@ $(function() {
         });
 
 
-        /* loops through each feed
+        /* test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
@@ -48,14 +48,17 @@ $(function() {
         });
     });
 
+
     describe('The menu', ()=>{
 
         /* ensures the menu element is
-         * hidden by default. 
+         * hidden by default. You'll have to analyze the HTML and
+         * the CSS to determine how we're performing the
+         * hiding/showing of the menu element.
          */
 
         it('is hidden by default', () => {
-            expect($('body').attr('class')).toBe("menu-hidden");
+            expect($('body').attr('class')).toContain("menu-hidden");
         });
 
 
@@ -67,106 +70,68 @@ $(function() {
         
         it('has been clicked', () => {
             $('.menu-icon-link').click();
-            expect($('body').attr('class')).toBe("");
+            expect($('body').attr('class')).not.toContain("menu-hidden");
             $('.menu-icon-link').click();
-            expect($('body').attr('class')).toBe("menu-hidden"); 
+            expect($('body').attr('class')).toContain("menu-hidden"); 
         });
 
     });
 
     describe("Initial Entries", () =>{
-         /*ensures when the loadFeed
+        let loaded = [];
+         /* ensures when the loadFeed
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
-         * Remember, loadFeed() is asynchronous so this test will require
-         * the use of Jasmine's beforeEach and asynchronous done() function.
          */
         beforeEach((done) =>{
             loadFeed(0,()=>{
                 done();
             });
         });
-        it('Should load the initial feed: '+allFeeds[0].name, (done) =>{
-            expect($('.feed').find('.entry h2').length).not.toBe(0);
+
+        it('Should load the feeds', (done) =>{
+            loaded = $('.feed').find('.entry h2');
+
+            console.log( loaded);
+            expect(loaded.length).not.toBe(0);
             done();
         });
-
     });
 
-  
 
-        /* ensures when a new feed is loaded
+        /* test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
-         * Remember, loadFeed() is asynchronous.
          */
     describe('New Feed Selection', () => {
-        var loaded = [],
+        let loaded = [],
             index = 0,
             md = forge.md.md5;
-        /* catch the feed options for each page we want, in this case we're goint to test each in allFeeds*/
+
+        /* catch the feed options*/
         beforeEach((done) =>{
-            loadFeed(index,()=>{
-                done();
-            });
-        });
-        /* After it spec, increase index of allFeeds */
-        afterEach( ()=>{
-            index++;
-        });
-
-        it('Should load the initial feed:'+allFeeds[0].name, (done) =>{
-            loaded[index] = $('.feed').find('.entry h2');
             try{
-                /* Get only the title, to have a precise comparation */
-                for(i=0;i<loaded[index].length;i++){
-                    loaded[index][i] = loaded[index][i].innerText;
-                }
-            }catch(error){ console.log(error); throw error;}  
-            console.log(index, loaded[index]);
-            expect(loaded[index].length).not.toBe(0);
-            done();
+                loadFeed(index,()=>{
+                    loaded.push($('.feed .entry'));
+                    console.log(index, loaded[index]);
+                    index++;
+                    done();
+                });
+                loadFeed(index,()=>{
+                        loaded.push($('.feed .entry'))
+                        console.log(index, loaded[index]);
+                        index++; 
+                        done();
+                });
+                 
+            }catch(error){ 
+                console.log('beforeEach:', error); throw error;
+            } 
         });
-
-        it('new Feed is loaded:'+allFeeds[1].name, (done) =>{ 
-            loaded[index] = $('.feed').find('.entry h2'); 
-            try{
-                for(i=0;i<loaded[index].length;i++){
-                    loaded[index][i] = loaded[index][i].innerText;
-                }
-            }catch(error){ console.log(error); throw error;}          
-            
-            console.log(index, loaded[index]);
-            expect(loaded[index].length).not.toBe(0);
-            expect(JSON.stringify(loaded[index-1]) === JSON.stringify(loaded[index])).not.toBe(true);
-            done();
-        });
-
-        it('new Feed is loaded:'+allFeeds[2].name, (done) =>{ 
-            loaded[index] = $('.feed').find('.entry h2'); 
-            try{
-                for(i=0;i<loaded[index].length;i++){
-                    loaded[index][i] = loaded[index][i].innerText;
-                }
-            }catch(error){ console.log(error); throw error;}          
-            
-            console.log(index, loaded[index]);
-            expect(loaded[index].length).not.toBe(0);
-            expect(JSON.stringify(loaded[index-1]) === JSON.stringify(loaded[index])).not.toBe(true);
-            done();
-        });
-
-        it('new Feed is loaded:'+allFeeds[3].name, (done) =>{ 
-            loaded[index] = $('.feed').find('.entry h2'); 
-            try{
-                for(i=0;i<loaded[index].length;i++){
-                    loaded[index][i] = loaded[index][i].innerText;
-                }
-            }catch(error){ console.log(error); throw error;}          
-            
-            console.log(index, loaded[index]);
-            expect(loaded[index].length).not.toBe(0);
-            expect(JSON.stringify(loaded[index-1]) === JSON.stringify(loaded[index])).not.toBe(true);
-            done();
+        
+        it('Should load the feeds on 2', () =>
+        {
+            /* start the comparations */
+            expect(loaded[0]).not.toBe(loaded[1]);   
         });
 
     });
