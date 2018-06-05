@@ -69,10 +69,16 @@ $(function() {
           */
         
         it('has been clicked', () => {
-            $('.menu-icon-link').click();
-            expect($('body').attr('class')).not.toContain("menu-hidden");
-            $('.menu-icon-link').click();
-            expect($('body').attr('class')).toContain("menu-hidden"); 
+            if($('body').hasClass("menu-hidden")){
+                $('.menu-icon-link').click();
+                expect($('body').attr('class')).not.toContain("menu-hidden");
+                $('.menu-icon-link').click();
+
+            }
+            if(!$('body').hasClass("menu-hidden")){
+                $('.menu-icon-link').click();
+                expect($('body').attr('class')).toContain("menu-hidden");   
+            }
         });
 
     });
@@ -89,12 +95,11 @@ $(function() {
             });
         });
 
-        it('Should load the feeds', (done) =>{
-            loaded = $('.feed').find('.entry h2');
+        it('Should load the feeds', () =>{
+            loaded = $('.feed .entry');
 
             console.log( loaded);
             expect(loaded.length).not.toBe(0);
-            done();
         });
     });
 
@@ -104,25 +109,26 @@ $(function() {
          */
     describe('New Feed Selection', () => {
         let loaded = [],
+            primeiro,
+            segundo,
             index = 0,
             md = forge.md.md5;
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 
         /* catch the feed options*/
         beforeEach((done) =>{
             try{
-                loadFeed(index,()=>{
-                    loaded.push($('.feed .entry'));
+               loadFeed(index,()=>{
+                    loaded[index] = $('.feed .entry').html();
                     console.log(index, loaded[index]);
                     index++;
-                    done();
-                });
-                loadFeed(index,()=>{
-                        loaded.push($('.feed .entry'))
+                    return loadFeed(index,()=>{
+                        loaded[index]  = $('.feed .entry').html();
                         console.log(index, loaded[index]);
                         index++; 
-                        done();
-                });
-                 
+                        return done();
+                    });
+                });                  
             }catch(error){ 
                 console.log('beforeEach:', error); throw error;
             } 
