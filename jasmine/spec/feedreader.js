@@ -109,8 +109,6 @@ $(function() {
          */
     describe('New Feed Selection', () => {
         let loaded = [],
-            primeiro,
-            segundo,
             index = 0,
             md = forge.md.md5;
             jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
@@ -120,11 +118,11 @@ $(function() {
             try{
                loadFeed(index,()=>{
                     loaded[index] = $('.feed').html();
-                    console.log(index, loaded[index]);
+                    //console.log(index, loaded[index]);
                     index++;
                     loadFeed(index,()=>{
                         loaded[index]  = $('.feed').html();
-                        console.log(index, loaded[index]);
+                        //console.log(index, loaded[index]);
                         index++; 
                         done();
                     });
