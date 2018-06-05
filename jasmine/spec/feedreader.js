@@ -119,14 +119,14 @@ $(function() {
         beforeEach((done) =>{
             try{
                loadFeed(index,()=>{
-                    loaded[index] = $('.feed .entry').html();
+                    loaded[index] = $('.feed').html();
                     console.log(index, loaded[index]);
                     index++;
-                    return loadFeed(index,()=>{
-                        loaded[index]  = $('.feed .entry').html();
+                    loadFeed(index,()=>{
+                        loaded[index]  = $('.feed').html();
                         console.log(index, loaded[index]);
                         index++; 
-                        return done();
+                        done();
                     });
                 });                  
             }catch(error){ 
